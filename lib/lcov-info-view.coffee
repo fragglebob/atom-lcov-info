@@ -5,9 +5,11 @@ coverage = require './coverage-lcov'
 PanelView = require './panel'
 
 CMD_TOGGLE = 'lcov-info:toggle'
+CMD_HIGHLIGHT = 'lcov-info:highlight'
 EVT_SWITCH = 'pane-container:active-pane-item-changed'
 
 toggled = false
+highlighted = false;
 editors = {}
 
 module.exports =
@@ -20,6 +22,7 @@ class LcovInfoView extends View
     console.log 'LcovInfoView: Initializing'
 
     atom.commands.add 'atom-workspace', CMD_TOGGLE, => @toggle()
+    atom.commands.add 'atom-workspace', CMD_HIGHLIGHT, => @highlight()
     atom.workspace.onDidChangeActivePaneItem (item) => @updateEditor()
     atom.workspace.onDidAddTextEditor (ev) => @updateEditor(ev.textEditor)
 
@@ -32,14 +35,15 @@ class LcovInfoView extends View
     console.log 'LcovInfoView: Toggled to display =', toggled = not toggled
     @updateEditor()
 
+  highlight: ->
+    console.log 'LcovInfoView: Highlighted code =', highlighted = not highlighted
+    @updateEditor()
+
   updateEditor: (editor) ->
     editor or= atom.workspace.getActiveTextEditor()
 
     @updateCovInfo(editor)
-
-    if !toggled
-      @removePanel()
-
+    @updatePanelInfo(editor)
     return
 
   updatePanel: (lcovData) ->
@@ -93,16 +97,24 @@ class LcovInfoView extends View
     editors[editor.id].decorations = []
     return
 
-  updateCovInfo: (editor) ->
-    return unless editor and editor.decorateMarker and editor.buffer.file
-
-    @removeCovInfo(editor)
-
+  updatePanelInfo: (editor) ->
+    return unless editor and editor.buffer.file
+    @removePanel()
+    return unless toggled
     coverage editor.buffer.file.path, (lcovData, cover) =>
       return unless lcovData
-
       @updatePanel(lcovData)
+      return unless cover
+      editors[editor.id].coverage = cover.coverage
+      @updateStatus(editor)
+      return
+    return
 
+  updateCovInfo: (editor) ->
+    return unless editor and editor.decorateMarker and editor.buffer.file
+    @removeCovInfo(editor)
+    return unless highlighted
+    coverage editor.buffer.file.path, (lcovData, cover) =>
       return unless cover
 
       displayAll = atom.config.get('lcov-info.coveredType') isnt 'Uncovered Lines Only'
@@ -117,8 +129,8 @@ class LcovInfoView extends View
             editors[editor.id].decorations.push editor.decorateMarker marker,
               class: line.klass, type: 'line'
 
+      return unless cover
       editors[editor.id].coverage = cover.coverage
       @updateStatus(editor)
-
       return
     return

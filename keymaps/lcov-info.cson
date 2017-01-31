@@ -9,3 +9,4 @@
 # https://atom.io/docs/latest/advanced/keymaps
 'atom-workspace':
   'ctrl-alt-c': 'lcov-info:toggle'
+  'ctrl-alt-h': 'lcov-info:highlight'
