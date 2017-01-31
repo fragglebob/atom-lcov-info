@@ -5,6 +5,7 @@
 Displays code coverage information inside Atom based from information contained in an LCOV formatted file.
 
 Using the current open file as a starting point, it traverses up the tree until the `coverage/lcov.info` file is found. As an example, while editing `/Users/joe/Projects/xyz/src/client/test.coffee` coverage information could be pulled from either `/Users/joe/Projects/xyz/src/coverage/lcov.info` or `/Users/joe/Projects/xyz/coverage/lcov.info`. (First match as found.)
+Or you can specify a path to this file in the settings (if the path is wrong, it will try to find it automatically).
 
 ![Coverage with line highlight](https://raw.githubusercontent.com/jacogr/atom-lcov-info/master/screenshots/coverage-01.png)
 
@@ -21,7 +22,7 @@ Some reasons why this package might fit the bill for you -
 - It does matching irrespective of the platform, i.e. mix-and-match of / and \ style paths are supported
 - A summary of the total coverage per line is displayed on the statusbar
 - A overall project summary is available, along with at-point views of the different project files
-- Covered lines are highlighted in green, uncovered lines in red
+- Covered lines are highlighted in green, uncovered lines in red by using `ctrl-alt-h`
 - Coverage display can be configured for gutter-only, line & gutter
 - Unobtrusive options to only display uncovered lines are available
 - Has been tested with Karma, Mocha and Istanbul outputs
