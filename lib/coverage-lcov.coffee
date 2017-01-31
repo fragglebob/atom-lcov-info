@@ -81,6 +81,13 @@ findInfoFile = (filePath) ->
       return filename
     return null
 
+  filename = atom.config.get('lcov-info.filePath')
+  if filename isnt "" and fs.existsSync(filename)
+      return filename
+
+  if filename isnt ""
+    atom.notifications.addError("The .info file path is wrong")
+
   while filePath and filePath isnt path.dirname(filePath)
     filename = testInfo(filePath, 'coverage') or testInfo(filePath, '.coverage')
     return filename if filename
@@ -88,6 +95,7 @@ findInfoFile = (filePath) ->
     filePath = path.dirname(filePath)
 
   console.log 'LcovInfoView: No coverage/lcov.info file found for', filePath
+  atom.notifications.addError("No .info file found.")
   return
 
 mapInfo = (filePath, lcovData, cb) ->

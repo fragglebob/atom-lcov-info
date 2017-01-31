@@ -14,6 +14,11 @@ module.exports =
       type: 'string'
       default: 'Covered & Uncovered Lines'
       enum: ['Covered & Uncovered Lines', 'Uncovered Lines Only']
+    filePath:
+      title: 'File path (optional)'
+      description: 'The path to the location of the .info file'
+      type: 'string'
+      default: ''
 
   lcovInfoView: null
 
